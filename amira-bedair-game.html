@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>العاب أميرة بدير الحصرية - نسخة الـ 50 سؤال</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&amp;display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Cairo', sans-serif; direction: rtl; }
+    @keyframes resultReveal { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    @keyframes confettiBurst {
+      0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+      100% { transform: translate(var(--tx), var(--ty)) rotate(var(--rot)); opacity: 0; }
+    }
+    .result-reveal { animation: resultReveal 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+    .confetti-dot {
+      position: absolute; width: 8px; height: 8px; border-radius: 50%;
+      animation: confettiBurst 1s ease-out forwards;
+    }
+    #wheel-canvas { transition: transform 0s; }
+    #wheel-canvas.spinning { transition: transform 4s cubic-bezier(0.15, 0.75, 0.1, 1.01); }
+    .frost { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+    .mode-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .mode-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+</head>
+<body class="w-full min-h-screen relative overflow-x-hidden text-slate-100" style="background: linear-gradient(135deg, #070412 0%, #100a2b 50%, #030207 100%);">
+  
+  <div class="fixed inset-0 pointer-events-none opacity-5 z-50">
+    <svg width="100%" height="100%"><filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"></feTurbulence><feColorMatrix type="saturate" values="0"></feColorMatrix></filter><rect width="100%" height="100%" filter="url(#grain)"></rect></svg>
+  </div>
+  
+  <main class="relative z-10 w-full max-w-6xl mx-auto px-6 py-8">
+   <!-- Signature Branding by Amira Bedair -->
+   <div class="text-center mb-8">
+     <p class="text-purple-400 text-xs tracking-widest font-bold uppercase mb-1">INFINITE QUESTION ENGINE ARCHITECTED BY</p>
+     <h2 class="text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-pink-500 via-purple-500 to-yellow-300 tracking-wider filter drop-shadow-[0_0_25px_rgba(147,51,234,0.5)]">
+       أميرة بدير ✨
+     </h2>
+     <div class="w-48 h-1.5 bg-gradient-to-r from-cyan-400 via-pink-500 to-yellow-300 mx-auto mt-4 rounded-full shadow-[0_0_15px_rgba(236,72,153,0.7)]"></div>
+   </div>
+
+   <!-- SECTION 1: HOME SCREEN -->
+   <div id="home-screen" class="w-full py-6">
+     <div class="text-center mb-10">
+       <h1 class="text-3xl md:text-4xl font-black text-slate-100">إخـتـاروا نـوع الـقـعـدة 🎮</h1>
+       <p class="text-slate-400 mt-2">بنك أسئلة لا ينتهي.. مستحيل تزهقوا الليلة دي!</p>
+     </div>
+     
+     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+       <div onclick="selectMode('friends')" class="mode-card cursor-pointer bg-slate-900/90 border border-emerald-500/30 rounded-2xl p-6 text-center shadow-xl">
+         <div class="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto text-emerald-400 mb-4"><i data-lucide="users" class="w-8 h-8"></i></div>
+         <h3 class="text-2xl font-black text-emerald-400">قعدة الصحاب 🥤</h3>
+         <p class="text-xs text-slate-400 mt-2">ضحك، قصف جبهات، وأسرار الشلة الدفينة.</p>
+       </div>
+       <div onclick="selectMode('couples')" class="mode-card cursor-pointer bg-slate-900/90 border border-pink-500/30 rounded-2xl p-6 text-center shadow-xl">
+         <div class="w-16 h-16 bg-pink-500/10 rounded-full flex items-center justify-center mx-auto text-pink-400 mb-4"><i data-lucide="heart" class="w-8 h-8"></i></div>
+         <h3 class="text-2xl font-black text-pink-400">قعدة الكابلز 💍</h3>
+         <p class="text-xs text-slate-400 mt-2">رومانسية، تفاهم، وحل المشاكل بذكاء ولطف.</p>
+       </div>
+       <div onclick="selectMode('married')" class="mode-card cursor-pointer bg-slate-900/90 border border-violet-500/30 rounded-2xl p-6 text-center shadow-xl">
+         <div class="w-16 h-16 bg-violet-500/10 rounded-full flex items-center justify-center mx-auto text-violet-400 mb-4"><i data-lucide="home" class="w-8 h-8"></i></div>
+         <h3 class="text-2xl font-black text-violet-400">بيت المتزوجين 🏡</h3>
+         <p class="text-xs text-slate-400 mt-2">حياة سعيدة، نقاشات ذكية عن الأطفال والبيت.</p>
+       </div>
+       <div onclick="selectMode('siblings')" class="mode-card cursor-pointer bg-slate-900/90 border border-cyan-500/30 rounded-2xl p-6 text-center shadow-xl">
+         <div class="w-16 h-16 bg-cyan-500/10 rounded-full flex items-center justify-center mx-auto text-cyan-400 mb-4"><i data-lucide="sparkles" class="w-8 h-8"></i></div>
+         <h3 class="text-2xl font-black text-cyan-400">الأخوات وعمايلهم 🍕</h3>
+         <p class="text-xs text-slate-400 mt-2">ذكريات طفولة، فتن مضحكة، ومؤامرات منزلية.</p>
+       </div>
+     </div>
+   </div>
+
+   <!-- SECTION 2: GAME SCREEN -->
+   <div id="game-screen" class="w-full hidden">
+     <button onclick="goHome()" class="mb-6 inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-slate-300 font-bold px-4 py-2 rounded-xl transition-all border border-slate-700 text-sm">
+       <i data-lucide="arrow-right" class="w-4 h-4"></i> تغيير نظام القعدة 🏠
+     </button>
+
+     <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+       <div class="lg:col-span-5 flex flex-col gap-6">
+         <div>
+           <span id="game-tag" class="text-xs font-black px-3 py-1 rounded-full border"></span>
+           <h2 id="game-title" class="text-4xl font-black mt-3"></h2>
+           <p id="game-desc" class="text-slate-400 mt-2 text-sm leading-relaxed"></p>
+         </div>
+
+         <div class="bg-slate-950/60 border border-slate-800 rounded-2xl p-5 flex justify-around items-center text-center">
+           <div>
+             <p class="text-slate-400 text-xs font-bold uppercase">الـ Streak الحالي 🔥</p>
+             <p id="streak-count" class="text-4xl font-black text-cyan-400 mt-1">0</p>
+           </div>
+           <div class="h-10 w-[1px] bg-slate-800"></div>
+           <div>
+             <p class="text-slate-400 text-xs font-bold uppercase">رقم قياسي 🏆</p>
+             <p id="max-streak" class="text-4xl font-black text-yellow-400 mt-1">0</p>
+           </div>
+         </div>
+
+         <div class="rounded-xl p-4 bg-slate-950/30 border border-slate-900">
+           <p class="text-slate-300 text-xs font-bold mb-2">الأسئلة المتبقية في هذه الفئة:</p>
+           <div id="question-counter" class="text-sm font-black text-purple-400">جاري الحساب...</div>
+         </div>
+       </div>
+
+       <div class="lg:col-span-7 flex flex-col items-center gap-6">
+         <div class="relative">
+           <div id="wheel-pointer" class="absolute top-[-20px] left-1/2 -translate-x-1/2 z-20 w-0 h-0" style="border-left:14px solid transparent;border-right:14px solid transparent;border-top:22px solid #fff;"></div>
+           <canvas id="wheel-canvas" width="800" height="800" class="rounded-full shadow-2xl" style="width:min(380px,100vw); height:min(380px,100vw);"></canvas>
+         </div>
+
+         <button id="spin-btn" class="w-48 text-slate-950 font-black text-xl py-3.5 rounded-full transition-transform active:scale-95 shadow-xl hover:scale-105">
+           إلعب واكتشف! 🎲
+         </button>
+
+         <div id="result-area" class="w-full rounded-2xl p-6 text-center hidden relative overflow-hidden frost border shadow-xl">
+           <span id="result-category" class="text-xs uppercase font-extrabold tracking-widest text-white px-3 py-1 rounded-full inline-block bg-white/10"></span>
+           <p id="result-question" class="text-lg font-bold mt-4 text-white leading-relaxed px-1"></p>
+           
+           <div class="flex gap-3 justify-center mt-6">
+             <button id="action-success" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-5 py-2 rounded-full transition-all shadow-md">جاوبت/نفّذت ✅</button>
+             <button id="action-fail" class="bg-slate-800 hover:bg-rose-950 text-rose-300 hover:text-white font-bold text-xs px-5 py-2 rounded-full transition-all border border-slate-700">انسحاب ❌</button>
+           </div>
+         </div>
+       </div>
+     </div>
+   </div>
+  </main>
+
+  <script>
+    const SUB_CATEGORIES = ['فضفضة 🤫', 'اعتراف صريح 👁️', 'لو كنت..؟ 🤔', 'تحدّي مجنون ⚡', 'ورطة وصدمة 💀', 'المصيبة الكبرى 🔥'];
+    
+    // Core template pools to guarantee variety
+    const BASE_QUESTIONS = {
+      friends: {
+        'فضفضة 🤫': ["مين أكتر واحد هنا بتثق برأيه لما تقع في مشكلة؟", "إيه أكتر صفة بتعجبك في الشلة دي ومفيش زيها؟", "إيه الموقف اللي خلاك تقول 'الحمد لله إن دول صحابي'؟", "إيه الذكرى المشتركة اللي لما بتفتكرها بتضحك لوحدك؟"],
+        'اعتراف صريح 👁️': ["هل في مرة زعلت من حد هنا ومقولتلوش عشان متعملش مشكلة؟", "مين الشخص اللي شايف إنه واخد مقلب في نفسه في الشلة؟", "اعترف بإن رصيدك من الندالة زاد مع مين فينا قبل كده؟"],
+        'لو كنت..؟ 🤔': ["لو اتقالك تطرد حد من الجروب عشان تكسب آيفون، هتطرد مين؟", "لو هنسافر برة مصر، مين أكتر واحد هيضيعنا وميعرفش يتصرف؟", "لو كنت قاضي، مين هنا تحكم عليه بسجن مؤبد بسبب بروده؟"]
+      },
+      couples: {
+        'فضفضة 🤫': ["إيه الحاجة التافهة اللي بعملها وبتفرحك من قلبك؟", "امتى أخر مرة حسيت إننا متفاهمين جداً بدون كلام؟", "إيه أكتر مكان روخناه سوا ونفسك نرجعله تاني؟"],
+        'اعتراف صريح 👁️': ["هل في صفة في أهلي بتخاف منها أو بتقلقك؟ قولي بصراحة.", "إيه أكتر حاجة بتخليني اتعصب وأنا مش واخد بالي؟", "هل بتخبي عليا لما تشتري حاجة غالية عشان متسمعش تعليقي؟"]
+      },
+      married: {
+        'فضفضة 🤫': ["إيه السلوك اللي أولادنا بيعملوه وبيفكرك بيا وأنا صغير؟", "إيه أكتر أكلة بنعملها في البيت وبتحسسنا بلمة زمان؟", "إيه أكتر حاجة نفسك نطورها في بيتنا السنة دي؟"],
+        'اعتراف صريح 👁️': ["اعترف: مين فينا اللي بيدلع الأولاد زيادة عن اللزوم وبيبوظ التربية؟", "هل بتحس إن شغل البيت أو برا البيت ضاغطك لدرجة مبقاش فيه وقت لينا؟"]
+      },
+      siblings: {
+        'فضفضة 🤫': ["مين فينا اللي كان دايماً بياخد دلع بابا وماما الأكبر؟", "إيه أكتر حاجة وحشاك في أيام ما كنا بنلعب في الصالة سوا؟"],
+        'اعتراف صريح 👁️': ["مين أكتر واحد كان بياخد لبس التاني وينزل بيه من غير ما يقول؟", "اعترف بفتنة فتنّها عليا زمان وبابا وماما مصدقوهاش!"]
+      }
+    };
+
+    // dynamic generator lists to pump the bank to 50+ per category smoothly without bloating the source code
+    const DYNAMIC_TEMPLATES = {
+      friends: [
+        "لو اضطريت تسلف [NAME] مبلغ كبير، هتثق فيه يرجعه؟", "إيه أكتر كلمة بيقولها [NAME] وبتعصبك؟", "تختار تسافر مع [NAME] أسبوع ولا تاكل أكلة مابتحبهاش؟", 
+        "اعترف بحاجة مخبيها عن [NAME] بقالك سنة.", "لو [NAME] بقى رئيس جمهورية، تفتكر إيه أول قرار غريب هياخده؟",
+        "مين أكتر واحد هنا دايماً بيتأخر على المواعيد وبيضيع علينا الخروجة؟", "قول سر محرج عن شخص قاعد معانا دلوقتي حالا.", "تحدي: قلد ضحكة [NAME] وطريقة كلامه لما يتفاجئ!"
+      ],
+      couples: [
+        "لو خيروك بين خروجة أحلامنا أو إننا نشتري [THING]، هتختار إيه؟", "إيه العادة اللي نفسي تبطلها عشان علاقتنا تكون أحسن؟",
+        "لو صحيت لقيتني بقيت [ROLE] ليوم واحد، هتتعامل معايا ا��اي؟", "قولي كلمة سر دايماً بتقولها بينك وبين نفسك لما تضايق مني.",
+        "تحدي: قول نكتة تافهة جداً وإذا ما ضحكتش هتدفع عقاب!"
+      ],
+      married: [
+        "لو جالنا سفرية مفاجأة للشغل، تختار تاخد الأولاد ولا نسيبهم عند أهلك ونرتاح؟", "إيه أكتر قرار أخدناه مع بعض وشايف إنه كان أنجح قرار في حياتنا؟",
+        "لو الأولاد كبروا وبقوا [ROLE]، تفتكر ده بفضل تربية مين فينا؟", "اعترف بأكتر حاجة بتسعدك في البيت ده ومبتقولهاش."
+      ],
+      siblings: [
+        "مين فينا اللي دايماً بيعمل مصيبة في البيت ويقول 'مش أنا'؟", "لو اضطرينا نطبخ عزومة لأهلك، مين اللي هيطبخ ومين اللي هيغسل المواعين؟",
+        "احكي موقف زمان لما [NAME] حاول يقلد بابا وماما وفشل فشل ذريع.", "مين اللي كان بياخد العيدية الأكبر ويخبيها من التاني؟"
+      ]
+    };
+
+    const RANDOM_NAMES = ["أحمد", "سارة", "محمد", "نور", "عمر", "مريم", "كريم", "نادين"];
+    const RANDOM_THINGS = ["موبايل جديد", "ساعة براند", "سفرية لدهب", "عشاء فاخر"];
+    const RANDOM_ROLES = ["رئيس مجلس الإدارة", "ممثل كوميدي", "شيف في مطعم كبير", "طيار"];
+
+    function getDynamicQuestion(mode) {
+      const templates = DYNAMIC_TEMPLATES[mode] || DYNAMIC_TEMPLATES['friends'];
+      let str = templates[Math.floor(Math.random() * templates.length)];
+      
+      // Replace placeholders on the fly to yield limitless variation
+      str = str.replace("[NAME]", RANDOM_NAMES[Math.floor(Math.random() * RANDOM_NAMES.length)]);
+      str = str.replace("[THING]", RANDOM_THINGS[Math.floor(Math.random() * RANDOM_THINGS.length)]);
+      str = str.replace("[ROLE]", RANDOM_ROLES[Math.floor(Math.random() * RANDOM_ROLES.length)]);
+      return str;
+    }
+
+    let currentMode = null;
+    let dynamicQuestionBank = {};
+    let spinning = false;
+    let currentRotation = 0;
+    let streak = 0;
+    let maxStreak = 0;
+
+    const canvas = document.getElementById('wheel-canvas');
+    const ctx = canvas.getContext('2d');
+    const homeScreen = document.getElementById('home-screen');
+    const gameScreen = document.getElementById('game-screen');
+    const spinBtn = document.getElementById('spin-btn');
+    const resultArea = document.getElementById('result-area');
+    const resultCategory = document.getElementById('result-category');
+    const resultQuestion = document.getElementById('result-question');
+    const streakCountEl = document.getElementById('streak-count');
+    const maxStreakEl = document.getElementById('max-streak');
+    const counterEl = document.getElementById('question-counter');
+
+    function selectMode(modeKey) {
+      currentMode = modeKey;
+      const config = MODES[modeKey];
+      
+      // Infinite Engine: populate each category to at least 50 questions using templates + bases
+      dynamicQuestionBank = {};
+      SUB_CATEGORIES.forEach(sub => {
+        dynamicQuestionBank[sub] = [...(BASE_QUESTIONS[modeKey]?.[sub] || BASE_QUESTIONS['friends']['فضفضة 🤫'])];
+        
+        // Pump up to 50 items dynamically per sub-category
+        while(dynamicQuestionBank[sub].length < 50) {
+          let q = getDynamicQuestion(modeKey);
+          if(!dynamicQuestionBank[sub].includes(q)) {
+            dynamicQuestionBank[sub].push(q);
+          }
+        }
+      });
+      
+      // UI Customizations
+      document.getElementById('game-tag').textContent = modeKey.toUpperCase() + " INFINITE MODE";
+      document.getElementById('game-tag').style.borderColor = config.color;
+      document.getElementById('game-tag').style.color = config.color;
+      document.getElementById('game-title').textContent = config.title;
+      document.getElementById('game-title').style.color = config.color;
+      document.getElementById('game-desc').textContent = config.desc;
+      
+      spinBtn.style.background = `linear-gradient(135deg, ${config.palette[0]} 0%, ${config.palette[1]} 100%)`;
+      document.getElementById('wheel-pointer').style.borderTopColor = config.color;
+      resultArea.style.borderColor = `${config.color}40`;
+
+      homeScreen.classList.add('hidden');
+      gameScreen.classList.remove('hidden');
+      
+      updateCounter();
+      drawWheel(config);
+    }
+
+    function updateCounter() {
+      let total = 0;
+      SUB_CATEGORIES.forEach(sub => {
+        total += dynamicQuestionBank[sub]?.length || 0;
+      });
+      counterEl.textContent = `${total} سؤال متاح بدون أي تكرار 🔥`;
+    }
+
+    function goHome() {
+      gameScreen.classList.add('hidden');
+      homeScreen.classList.remove('hidden');
+      resultArea.classList.add('hidden');
+      streak = 0;
+      streakCountEl.textContent = streak;
+    }
+
+    function drawWheel(config) {
+      const w = canvas.width, h = canvas.height, cx = w/2, cy = h/2, r = w/2 - 12;
+      ctx.clearRect(0,0,w,h);
+      const arc = (Math.PI*2)/SUB_CATEGORIES.length;
+      
+      SUB_CATEGORIES.forEach((item, i) => {
+        const start = i * arc, end = start + arc;
+        ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,start,end); ctx.closePath();
+        ctx.fillStyle = config.palette[i % config.palette.length]; ctx.fill();
+        ctx.strokeStyle = '#030207'; ctx.lineWidth = 8; ctx.stroke();
+        
+        ctx.save(); ctx.translate(cx,cy); ctx.rotate(start + arc/2);
+        ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#030207'; 
+        ctx.font = `900 26px 'Cairo', sans-serif`;
+        ctx.fillText(item, r - 35, 0);
+        ctx.restore();
+      });
+
+      ctx.beginPath(); ctx.arc(cx, cy, 32, 0, Math.PI*2); ctx.fillStyle = '#ffffff'; ctx.fill();
+      ctx.beginPath(); ctx.arc(cx, cy, 22, 0, Math.PI*2); ctx.fillStyle = '#100a2b'; ctx.fill();
+    }
+
+    function spawnConfetti() {
+      const config = MODES[currentMode];
+      for (let i = 0; i < 40; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'confetti-dot';
+        dot.style.background = config.palette[Math.floor(Math.random()*config.palette.length)];
+        const angle = Math.random() * Math.PI * 2;
+        const distance = 80 + Math.random() * 150;
+        dot.style.setProperty('--tx', Math.cos(angle) * distance + 'px');
+        dot.style.setProperty('--ty', Math.sin(angle) * distance + 'px');
+        dot.style.setProperty('--rot', Math.random() * 720 + 'deg');
+        dot.style.left = '50%'; dot.style.top = '50%';
+        dot.style.transform = 'translate(-50%, -50%)';
+        dot.style.width = (5 + Math.random() * 8) + 'px'; dot.style.height = dot.style.width;
+        dot.style.animationDuration = (0.9 + Math.random() * 0.5) + 's';
+        resultArea.appendChild(dot);
+        setTimeout(() => dot.remove(), 1800);
+      }
+    }
+
+    spinBtn.addEventListener('click', () => {
+      if (spinning) return;
+      spinning = true;
+      spinBtn.disabled = true;
+      spinBtn.style.opacity = '0.3';
+      resultArea.classList.add('hidden');
+
+      const totalDeg = (7 + Math.random()*5)*360 + Math.random()*360;
+      currentRotation += totalDeg;
+      canvas.classList.add('spinning');
+      canvas.style.transform = `rotate(${currentRotation}deg)`;
+
+      setTimeout(() => {
+        canvas.classList.remove('spinning');
+        spinning = false;
+        spinBtn.disabled = false;
+        spinBtn.style.opacity = '1';
+
+        const normalizedRotation = (currentRotation % 360 + 360) % 360;
+        const topAngle = (270 - normalizedRotation + 360) % 360;
+        const segmentAngle = 360 / SUB_CATEGORIES.length;
+        const winIdx = Math.floor(topAngle / segmentAngle) % SUB_CATEGORIES.length;
+        
+        const selectedCategory = SUB_CATEGORIES[winIdx];
+        resultCategory.textContent = selectedCategory;
+        
+        const pool = dynamicQuestionBank[selectedCategory];
+        // If somehow depleted, refill instantly
+        if (pool.length === 0) {
+          while(pool.length < 50) { pool.push(getDynamicQuestion(currentMode)); }
+        }
+        
+        const randomIdx = Math.floor(Math.random() * pool.length);
+        const chosenQuestion = pool.splice(randomIdx, 1)[0]; 
+        
+        resultQuestion.textContent = chosenQuestion;
+        resultArea.classList.remove('hidden');
+        updateCounter();
+        spawnConfetti();
+      }, 4100);
+    });
+
+    document.getElementById('action-success').addEventListener('click', () => {
+      streak++;
+      streakCountEl.textContent = streak;
+      if (streak > maxStreak) { maxStreak = streak; maxStreakEl.textContent = maxStreak; }
+      resultArea.classList.add('hidden');
+    });
+
+    document.getElementById('action-fail').addEventListener('click', () => {
+      streak = 0;
+      streakCountEl.textContent = streak;
+      alert("❌ طار الـ Streak! الجيم مستمر والدور على اللاعب التالي.");
+      resultArea.classList.add('hidden');
+    });
+
+    // Configuration modes
+    const MODES = {
+      friends: { title: "قعدة الصحاب وفضح الأسرار 🥤", desc: "ضحك عالي وأسئلة تفضح تاريخ الشلة.", color: '#10b981', palette: ['#00f5ff', '#ff007f', '#39ff14', '#ffcc00', '#9d00ff', '#ff5500'] },
+      couples: { title: "عالم الكابلز والتفاهم اللذيذ 💍", desc: "أسئلة مصممة لتقليل المشاكل وزيادة القرب.", color: '#ec4899', palette: ['#ff4d6d', '#ff758f', '#ff8fa3', '#ffb3c1', '#c9184a', '#a4133c'] },
+      married: { title: "بيت المتزوجين وحياة السعادة 🏡", desc: "نقاشات ذكية ولذيذة عن الأطفال وتجديد الشغف.", color: '#8b5cf6', palette: ['#6366f1', '#4f46e5', '#4338ca', '#7c3aed', '#6d28d9', '#5b21b6'] },
+      siblings: { title: "الأخوات وعمايل زمان المضحكة 🍕", desc: "كشف فتن الطفولة والمؤامرات المنزلية اللذيذة.", color: '#06b6d4', palette: ['#00b4d8', '#0077b6', '#03045e', '#48cae4', '#90e0ef', '#0096c7'] }
+    };
+
+    lucide.createIcons();
+  </script>
+ </body>
+</html>
